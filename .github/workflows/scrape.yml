@@ -27,9 +27,11 @@ jobs:
           python scrape_emart_leaflets.py
 
       - name: Commit leaflet images
+        env:
+          GH_PAT: ${{ secrets.MART_SECRET }}
         run: |
-          git config --global user.name "YoonKyoungTae"
-          git config --global user.email "yoon91dev@gmail.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           if [ -d "leaflets" ] && [ "$(ls -A leaflets)" ]; then
             git add leaflets/
             git commit -m "📦 Update Emart leaflets - $(date '+%Y-%m-%d')" || echo "No changes to commit"
