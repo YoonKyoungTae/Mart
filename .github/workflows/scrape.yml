@@ -2,12 +2,14 @@ name: Daily Emart Leaflet Scraper
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 매일 00:00 UTC → 한국 오전 9시
+    - cron: '0 1 * * *'  # 매일 01:00 UTC → 한국 오전 10시
   workflow_dispatch:  # 수동 실행도 가능하게
 
 jobs:
   scrape-leaflets:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Git push를 위한 권한
 
     steps:
       - name: Checkout Repository
@@ -17,25 +19,29 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
+          pip install --upgrade pip
           pip install requests beautifulsoup4
 
       - name: Run leaflet scraper
         run: |
           python scrape_emart_leaflets.py
 
-      - name: Commit leaflet images
-        env:
-          GH_PAT: ${{ secrets.MART_SECRET }}
+      - name: Commit and push leaflet images
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          if [ -d "leaflets" ] && [ "$(ls -A leaflets)" ]; then
+          
+          # 변경사항이 있는지 확인
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "📁 New leaflet images found, committing..."
             git add leaflets/
-            git commit -m "📦 Update Emart leaflets - $(date '+%Y-%m-%d')" || echo "No changes to commit"
+            git commit -m "📦 Daily E-mart leaflets update - $(date '+%Y-%m-%d %H:%M')"
             git push
+            echo "✅ Successfully pushed new leaflet images"
           else
-            echo "No new leaflet images to commit"
+            echo "ℹ️ No new leaflet images to commit"
           fi
