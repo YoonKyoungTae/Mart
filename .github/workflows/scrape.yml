@@ -1,0 +1,35 @@
+name: Daily Emart Leaflet Scraper
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 매일 00:00 UTC → 한국 오전 9시
+  workflow_dispatch:  # 수동 실행도 가능하게
+
+jobs:
+  scrape-leaflets:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: Run leaflet scraper
+        run: |
+          python scrape_emart_leaflets.py
+
+      - name: Commit leaflet images
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add leaflets/
+          git commit -m "📦 Update Emart leaflets - $(date '+%Y-%m-%d')" || echo "No changes to commit"
+          git push
