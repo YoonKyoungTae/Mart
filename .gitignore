@@ -1,0 +1,22 @@
+# 디버깅용 HTML 파일
+emart.html
+
+# Python 가상환경
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# 시스템 파일
+.DS_Store
+Thumbs.db
+
+# IDE 설정
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 임시 파일
+*.tmp
+*.log

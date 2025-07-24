@@ -35,13 +35,19 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # 변경사항이 있는지 확인
-          if [ -n "$(git status --porcelain)" ]; then
+          # leaflets 폴더의 새로운 이미지 파일이 있는지 확인
+          if [ -d "leaflets" ] && [ "$(find leaflets -name '*.jpg' -type f)" ]; then
             echo "📁 New leaflet images found, committing..."
             git add leaflets/
-            git commit -m "📦 Daily E-mart leaflets update - $(date '+%Y-%m-%d %H:%M')"
-            git push
-            echo "✅ Successfully pushed new leaflet images"
+            
+            # 실제로 스테이징된 변경사항이 있는지 확인
+            if git diff --cached --quiet; then
+              echo "ℹ️ No new changes to commit (images may already exist)"
+            else
+              git commit -m "📦 Daily E-mart leaflets update - $(date '+%Y-%m-%d %H:%M')"
+              git push
+              echo "✅ Successfully pushed new leaflet images"
+            fi
           else
-            echo "ℹ️ No new leaflet images to commit"
+            echo "⚠️ No leaflet images found to commit"
           fi
