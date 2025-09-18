@@ -1,8 +1,8 @@
 name: Daily Emart Leaflet Scraper
 
 on:
-  schedule:
-    - cron: '0 1 * * *'  # 매일 01:00 UTC → 한국 오전 10시
+  # schedule:
+    # - cron: '0 1 * * *'  # 매일 01:00 UTC → 한국 오전 10시
   workflow_dispatch:  # 수동 실행도 가능하게
 
 jobs:
